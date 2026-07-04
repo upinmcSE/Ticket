@@ -1,0 +1,5 @@
+version: '3.2'
+
+networks:
+  pre-event-network:
+    driver: bridge
