@@ -8,7 +8,7 @@ spring:
   data:
     redis:
       host: 127.0.0.1 # Host of the Redis server
-      port: 6319 # Port of the Redis server for connection
+      port: 6379 # Port of the Redis server for connection
       password: ""  # Password for connecting to the Redis server (default is empty)
       lettuce:
         pool: # Connection pool settings

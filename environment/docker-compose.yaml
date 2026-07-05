@@ -9,6 +9,36 @@ volumes:
   redis-data:
 
 services:
+  app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    image: ticket-app:local
+    container_name: ticket-app
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATA_REDIS_HOST: ticket-redis
+      SPRING_DATA_REDIS_PORT: "6379"
+      SPRING_DATASOURCE_URL: jdbc:postgresql://ticket-postgres:5432/ticket
+      SPRING_DATASOURCE_USERNAME: postgresql
+      SPRING_DATASOURCE_PASSWORD: postgresql
+      JAVA_OPTS: "-XX:MaxRAMPercentage=75.0 -XX:+ExitOnOutOfMemoryError"
+    networks:
+      - pre-event-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health | grep -q '\"status\":\"UP\"' || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+
   postgres:
     image: postgres:16-alpine
     container_name: ticket-postgres
